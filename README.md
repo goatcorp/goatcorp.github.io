@@ -22,12 +22,22 @@ The original FFXIV launcher is slow and cannot save your password. This project 
 
 Check the settings page and use the /xlhelp command in-game to see available commands.
 
-## How to install
+## How to install the launcher
 
 [Download the latest "Setup.exe" from the releases](https://github.com/goatcorp/FFXIVQuickLauncher/releases/latest) page and run it. XIVLauncher will start and will be installed to your start menu.
 To uninstall, you can use the Windows Programs & Apps menu or right click XIVLauncher in your start menu.
 
 ⚠ <b>Attention!</b> If you receive errors during the installation or if the launcher doesn't work correctly, make sure to <b>check your antivirus</b> first and disable it for XIVLauncher. Many commercial antivirus programs detect XIVLauncher as a false positive. You can check for yourself on VirusTotal. If you need any help with this, please [check our FAQ](https://goatcorp.github.io/faq/xl_troubleshooting#q-how-do-i-whitelist-xivlauncher-and-dalamud-so-my-antivirus-leaves-them-alone) or join our Discord channel.
+
+## How to install plugins
+Open the system menu in-game by pressing escape, and then select "Dalamud Plugins" from there. You can also use the ``/xlplugins`` command in chat.<br>If the command is not found, or the options don't show up, make sure that the in-game addon is enabled in the launcher settings.
+
+## Need any help?
+
+[Please check out our exhaustive FAQ](https://goatcorp.github.io/faq/), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming moderator team.
+
+<br>
+<br>
 
 ## Plugin API
 
@@ -46,10 +56,6 @@ Make sure that your plugin does not directly interact with the game servers in a
 <br>c) *circumvent paywalls*, as in any attempts to bypass restrictions that require purchase to be lifted such as enabling access to mog station emotes.
 
 We feel like that this offers developers the __freedom to improve the game's functionality__ in ways that SE can't, while officially disallowing plugins that can give __unfair advantages over players on other platforms__.
-
-## Any questions?
-
-[Please check out the FAQ](https://goatcorp.github.io/faq/), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming moderator team.
 
 <br>
 <br>
