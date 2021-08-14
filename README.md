@@ -1,6 +1,6 @@
 Read in: [日本語](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Japanese)) \| [Français](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(French)) \| [Deutsch](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(German)) \| [Español](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Spanish)) \| [简体中文](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Chinese-Simplified)) \| [繁體中文](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Chinese-Traditional)) \| [한국어](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Korean)) \| [Italiano](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Italian))
 
-XIVLauncher (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with various available addons and enhancements to the game!
+<span style="color: #2f89d6;">XIVLauncher</span> (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with various available addons and enhancements to the game!
 
 <p align="center">
   <a href="https://github.com/goatcorp/FFXIVQuickLauncher/releases">
