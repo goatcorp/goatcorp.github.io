@@ -46,7 +46,7 @@ XIVLauncher lets you use many community-created plugins that improve your game. 
 
 If you want to contribute to the plugin API itself, you can check it out [here](https://github.com/goatcorp/Dalamud).<br>Special thanks to Mino for his hooking base!
 
-### Isn't this cheating?
+### Is this cheating?
 
 We don't think so - our official guideline for plugins on this launcher is this:<br>
 
