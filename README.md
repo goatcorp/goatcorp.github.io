@@ -36,7 +36,7 @@ Open the system menu in-game by pressing escape, and then select "Dalamud Plugin
 [Please check out our exhaustive FAQ](https://goatcorp.github.io/faq/), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming moderator team.
 
 ## Is XIVLauncher safe to use?
-Please read through our [FAQ entry](https://goatcorp.github.io/faq/xl_troubleshooting#q-are-xivlauncher-dalamud-and-dalamud-plugins-safe-to-use) on this matter.
+We put a lot of effort into ensuring that XIVLauncher is safe to use for everyone.<br>Please read through our [FAQ entry](https://goatcorp.github.io/faq/xl_troubleshooting#q-are-xivlauncher-dalamud-and-dalamud-plugins-safe-to-use) on this matter if you want to know more.
 
 <br>
 <br>
