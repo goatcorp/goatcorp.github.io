@@ -63,6 +63,6 @@ We feel like that this offers developers the __freedom to improve the game's fun
 <br>
 
 ## Disclaimer
-As with all of my stuff, this is technically not in line with Square Enix TOS - I've tried to make it as undetectable as possible and no one, as far as I know, has gotten into trouble for using this - but it always could be a possibility.
+XIVLauncher is not in-line with Square Enix ToS. We are doing our best to make it safe to use for everyone, and to our knowledge, no one ever got into trouble for using XIVLauncher, but please be aware that it is a possibility.<br>You can read through our [FAQ entry](https://goatcorp.github.io/faq/xl_troubleshooting#q-are-xivlauncher-dalamud-and-dalamud-plugins-safe-to-use) on this matter if you want to know more.
 
 ##### Final Fantasy XIV © 2010-2021 SQUARE ENIX CO., LTD. All Rights Reserved. We are not affiliated with SQUARE ENIX CO., LTD. in any way.
