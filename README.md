@@ -10,7 +10,7 @@ Read in: [日本語](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(J
 
 ## Why?
 
-The original FFXIV launcher is slow and cannot save your password. This project aims to fix that and add some QoL features to the game that were not there before, such as:
+The original FFXIV launcher is slow and cannot save your password. This project aims to fix that and add some QoL features to the game, such as:
 
 * Auto-login
 * Fast patching
