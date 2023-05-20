@@ -170,7 +170,7 @@
                         encryptionKeys: parsedKey
                     });
                     console.log(encrypted); // '-----BEGIN PGP MESSAGE ... END PGP MESSAGE-----'
-                    $('#output').val(`plugin.secrets.${$('#secretname').val()} = '${encrypted.replace(/\n/g, "\\n")}'`);
+                    $('#output').val(`[plugin.secrets]\n${$('#secretname').val()} = '${encrypted.replace(/\n/g, "\\n")}'`);
                     $('#secretnamespan').html(`PLOGON_SECRET_${$('#secretname').val()}`);
                 });
             });
