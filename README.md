@@ -35,7 +35,7 @@ XIVLauncher supports the installation of __plugins/addons__ made by __third-part
 Open the system menu in-game by pressing escape, and then select "Dalamud Plugins" from there. You can also use the ``/xlplugins`` command in chat.<br>If the command is not found, or the options don't show up, make sure that the in-game addon is enabled in the launcher settings.
 
 ## Need any help?
-[Please check out our exhaustive FAQ](https://goatcorp.github.io/faq/), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming community.
+[Please check out our exhaustive FAQ](https://goatcorp.github.io/faq/), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming community. Please make sure to read the rules and channel descriptions thoroughly before posting.
 
 ## Is XIVLauncher safe to use?
 We put a lot of effort into ensuring that XIVLauncher is safe to use for everyone.<br>Please read through our [FAQ entry](https://goatcorp.github.io/faq/xl_troubleshooting#q-are-xivlauncher-dalamud-and-dalamud-plugins-safe-to-use) on this matter if you want to know more.
@@ -54,12 +54,12 @@ If you want to contribute to the plugin API itself, you can check it out [here](
 
 We don't think so - our official guideline for plugins on this launcher is this:<br>
 
-Make sure that your plugin does not directly interact with the game servers in a way that is...
-<br>a) *outside of specification*, as in allowing the player to do things or submit data to the server that would not be possible by normal means or by a normal player on PC or PS4.
-<br>b) *automatic*, as in polling data or making requests without direct interaction from the user which could create unwanted load on the server or give away that XIVLauncher is being used.
-<br>c) *circumvent paywalls*, as in any attempts to bypass restrictions that require purchase to be lifted such as enabling access to mog station emotes.
+Make sure that your plugin does not directly interact with the game servers in a way that...
+<br>a) *acts outside of specification*, as in allowing the player to do things or submit data to the server that would not be possible by normal means or by a normal player on PC or PS4.
+<br>b) *is automated*, as in polling data or making requests without direct interaction from the user which could create unwanted load on the server or give away that XIVLauncher is being used.
+<br>c) *circumvents paywalls*, as in any attempts to bypass restrictions that require purchase to be lifted such as enabling access to mog station emotes.
 
-We feel like that this offers developers the __freedom to improve the game's functionality__ in ways that SE can't, while officially disallowing plugins that can give __unfair advantages over players on other platforms__.
+We feel like that this offers developers the __freedom to improve the game's functionality__ in ways that SE can't or won't, while officially disallowing plugins that can give __unfair advantages over players on other platforms__.
 
 <br>
 <br>
