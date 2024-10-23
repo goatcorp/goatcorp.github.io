@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dalamud D17 Repo Metrics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #242424;
+            --text-color: #e0e0e0;
+            --border-color: #333;
+            --header-gradient-start: #1a237e;
+            --header-gradient-end: #0d47a1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            margin-right: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem 2rem 2rem;
+        }
+
+        .chart-container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="back-button">← Back</a>
+        <h1>Dalamud D17 Repo Metrics</h1>
+    </div>
+    <div class="dashboard">
+        <div class="chart-container">
+            <canvas id="pluginUpdatesChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="uniqueDependenciesChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="dependencyVersionsChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="topDependenciesChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="mostUpdatedPluginsChart"></canvas>
+        </div>
+        <div class="stat-card" id="pacMember">
+            <h2>PAC Member of the Month</h2>
+            <div class="stat-value" id="pacMemberText">Loading...</div>
+        </div>
+        <!--
+        <div class="stat-card" id="mostActiveDev">
+            <h2>Most Active Developer</h2>
+            <div class="stat-value" id="mostActiveDevText">Loading...</div>
+        </div>
+        -->
+    </div>
+
+    <script>
+        // Initialize Chart.js defaults for dark mode
+        Chart.defaults.color = '#e0e0e0';
+        Chart.defaults.borderColor = '#333';
+
+        const NeedType = {
+            0: 'File',
+            1: 'NuGet',
+            2: 'Submodule'
+        };
+
+        async function fetchGithubAvatar(username) {
+            try {
+                const response = await fetch(`https://api.github.com/users/${username}`);
+                const data = await response.json();
+                return data.avatar_url;
+            } catch (error) {
+                console.error('Error fetching avatar:', error);
+                return null;
+            }
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/goatcorp/PluginDistD17/refs/heads/main/state.json');
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return null;
+            }
+        }
+
+        function countPluginUpdates(data) {
+            let monthlyUpdates = {};
+            
+            Object.values(data.Channels).forEach(channel => {
+                Object.values(channel.Plugins).forEach(plugin => {
+                    Object.values(plugin.Changelogs).forEach(changelog => {
+                        const month = new Date(changelog.TimeReleased).toLocaleString('default', { month: 'short', year: 'numeric' });
+                        monthlyUpdates[month] = (monthlyUpdates[month] || 0) + 1;
+                    });
+                });
+            });
+            
+            // Sort the months chronologically
+            const sortedUpdates = Object.fromEntries(
+                Object.entries(monthlyUpdates).sort((a, b) => {
+                    return new Date(a[0]) - new Date(b[0]);
+                })
+            );
+            
+            return sortedUpdates;
+        }
+
+        function analyzeDependencies(data) {
+            let dependenciesByType = {
+                'File': new Set(),
+                'NuGet': new Set(),
+                'Submodule': new Set()
+            };
+            
+            let versionsByType = {
+                'File': new Set(),
+                'NuGet': new Set(),
+                'Submodule': new Set()
+            };
+
+            data.ReviewedNeeds.forEach(need => {
+                // Convert numeric type to string representation
+                const typeString = NeedType[need.Type];
+                dependenciesByType[typeString].add(need.Key);
+                versionsByType[typeString].add(`${need.Key}@${need.Version}`);
+            });
+
+            return {
+                unique: Object.fromEntries(
+                    Object.entries(dependenciesByType).map(([key, value]) => [key, value.size])
+                ),
+                versions: Object.fromEntries(
+                    Object.entries(versionsByType).map(([key, value]) => [key, value.size])
+                )
+            };
+        }
+
+        function findTopReviewer(data) {
+            const lastMonth = new Date();
+            lastMonth.setMonth(lastMonth.getMonth() - 1);
+            
+            let reviewerCount = {};
+            
+            Object.values(data.Channels).forEach(channel => {
+                Object.values(channel.Plugins).forEach(plugin => {
+                    Object.values(plugin.Changelogs).forEach(changelog => {
+                        const releaseDate = new Date(changelog.TimeReleased);
+                        if (releaseDate >= lastMonth) {
+                            reviewerCount[changelog.Reviewer] = (reviewerCount[changelog.Reviewer] || 0) + 1;
+                        }
+                    });
+                });
+            });
+
+            return Object.entries(reviewerCount)
+                .sort(([,a], [,b]) => b - a)[0] || ['None', 0];
+        }
+
+        function countMostUpdatedPlugins(data) {
+            let pluginUpdates = {};
+            
+            Object.values(data.Channels).forEach(channel => {
+                Object.entries(channel.Plugins).forEach(([pluginName, plugin]) => {
+                    const updateCount = Object.keys(plugin.Changelogs).length;
+                    pluginUpdates[pluginName] = (pluginUpdates[pluginName] || 0) + updateCount;
+                });
+            });
+
+            return Object.entries(pluginUpdates)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 10);
+        }
+
+        function getMostUsedDependencies(data) {
+            let depsByType = {
+                'File': {},
+                'NuGet': {},
+                'Submodule': {}
+            };
+
+            data.ReviewedNeeds.forEach(need => {
+                const typeString = NeedType[need.Type];
+                
+                // Skip certain NuGet packages
+                if (typeString === 'NuGet' && 
+                    (need.Key === 'DalamudPackager' || 
+                     need.Key.startsWith('Microsoft.') || 
+                     need.Key.startsWith('System.'))) {
+                    return;
+                }
+
+                depsByType[typeString][need.Key] = (depsByType[typeString][need.Key] || 0) + 1;
+            });
+
+            // Get top 5 for each type
+            return Object.fromEntries(
+                Object.entries(depsByType).map(([type, deps]) => [
+                    type,
+                    Object.entries(deps)
+                        .sort(([,a], [,b]) => b - a)
+                        .slice(0, 5)
+                ])
+            );
+        }
+
+        function findMostActiveDeveloper(data) {
+            let devActivity = {};
+            
+            Object.values(data.Channels).forEach(channel => {
+                Object.values(channel.Plugins).forEach(plugin => {
+                    Object.values(plugin.Changelogs).forEach(changelog => {
+                        devActivity[changelog.Reviewer] = devActivity[changelog.Reviewer] || { updates: 0, plugins: new Set() };
+                        devActivity[changelog.Reviewer].updates++;
+                        // Using plugin.EffectiveVersion as a proxy for plugin name since we don't have direct access
+                        devActivity[changelog.Reviewer].plugins.add(plugin.EffectiveVersion);
+                    });
+                });
+            });
+
+            return Object.entries(devActivity)
+                .map(([dev, stats]) => ({
+                    developer: dev,
+                    updates: stats.updates,
+                    uniquePlugins: stats.plugins.size
+                }))
+                .sort((a, b) => (b.updates + b.uniquePlugins) - (a.updates + a.uniquePlugins))[0];
+        }
+
+        function createCharts(data) {
+            const updates = countPluginUpdates(data);
+            const dependencies = analyzeDependencies(data);
+            const topDeps = getMostUsedDependencies(data);
+            const [topReviewer, reviewCount] = findTopReviewer(data);
+            const mostActive = findMostActiveDeveloper(data);
+
+            // Plugin Updates Chart
+            new Chart(document.getElementById('pluginUpdatesChart'), {
+                type: 'line',
+                data: {
+                    labels: Object.keys(updates),
+                    datasets: [{
+                        label: 'Plugin Updates',
+                        data: Object.values(updates),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Plugin Updates'
+                        }
+                    }
+                }
+            });
+
+            // Unique Dependencies Chart
+            new Chart(document.getElementById('uniqueDependenciesChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(dependencies.unique),
+                    datasets: [{
+                        label: 'Unique Dependencies',
+                        data: Object.values(dependencies.unique),
+                        backgroundColor: 'rgb(255, 99, 132)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Unique Dependencies by Type'
+                        }
+                    }
+                }
+            });
+
+            // Dependency Versions Chart
+            new Chart(document.getElementById('dependencyVersionsChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(dependencies.versions),
+                    datasets: [{
+                        label: 'Unique Versions',
+                        data: Object.values(dependencies.versions),
+                        backgroundColor: 'rgb(54, 162, 235)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Unique Dependency Versions by Type'
+                        }
+                    }
+                }
+            });
+
+            // Most Used Dependencies Chart
+            new Chart(document.getElementById('topDependenciesChart'), {
+                type: 'bar',
+                data: {
+                    datasets: Object.entries(topDeps).map(([type, deps], index) => ({
+                        label: type,
+                        data: deps.map(([key, value]) => ({
+                            x: key,
+                            y: value
+                        })),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)'
+                        ][index]
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Most Used Dependencies by Type'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                callback: function(value) {
+                                    // Truncate long package names
+                                    return this.getLabelForValue(value).substring(0, 20);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Most Updated Plugins Chart
+            const topPlugins = countMostUpdatedPlugins(data);
+            new Chart(document.getElementById('mostUpdatedPluginsChart'), {
+                type: 'bar',
+                data: {
+                    labels: topPlugins.map(([name]) => name),
+                    datasets: [{
+                        label: 'Update Count',
+                        data: topPlugins.map(([, count]) => count),
+                        backgroundColor: 'rgba(75, 192, 192, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Most Updated Plugins'
+                        }
+                    }
+                }
+            });
+
+            // Update PAC Member of the Month
+            const pacMemberText = document.getElementById('pacMemberText');
+            pacMemberText.textContent = `${topReviewer} (${reviewCount} updates)`;
+            
+            // Update Most Active Developer
+            /*
+            const mostActiveDevText = document.getElementById('mostActiveDevText');
+            mostActiveDevText.textContent = 
+                `${mostActive.developer} (${mostActive.updates} updates, ${mostActive.uniquePlugins} plugins)`;
+            */
+
+            // Fetch and set avatar backgrounds
+            fetchGithubAvatar(topReviewer).then(avatarUrl => {
+                if (avatarUrl) {
+                    const img = document.createElement('img');
+                    img.src = avatarUrl;
+                    img.className = 'profile-bg';
+                    document.getElementById('pacMember').appendChild(img);
+                }
+            });
+
+            /*
+            fetchGithubAvatar(mostActive.developer).then(avatarUrl => {
+                if (avatarUrl) {
+                    const img = document.createElement('img');
+                    img.src = avatarUrl;
+                    img.className = 'profile-bg';
+                    document.getElementById('mostActiveDev').appendChild(img);
+                }
+            });
+            */
+        }
+
+        // Initialize the dashboard
+        fetchData().then(data => {
+            if (data) {
+                createCharts(data);
+            }
+        });
+    </script>
+</body>
+</html>
