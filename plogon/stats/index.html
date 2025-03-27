@@ -294,7 +294,7 @@
                         if (changelog.Submitter === null)
                             return;
 
-                        devActivity[changelog.Submitter] = devActivity[changelog.Reviewer] || { updates: 0, plugins: new Set() };
+                        devActivity[changelog.Submitter] = devActivity[changelog.Submitter] || { updates: 0, plugins: new Set() };
                         devActivity[changelog.Submitter].updates++;
                         // Using plugin.EffectiveVersion as a proxy for plugin name since we don't have direct access
                         devActivity[changelog.Submitter].plugins.add(plugin.EffectiveVersion);
