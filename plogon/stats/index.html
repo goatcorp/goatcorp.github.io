@@ -181,7 +181,8 @@
             // Sort the months chronologically
             const sortedUpdates = Object.fromEntries(
                 Object.entries(monthlyUpdates).sort((a, b) => {
-                    return new Date(a[0]) - new Date(b[0]);
+                    // https://stackoverflow.com/questions/59930217/javascript-new-date-from-month-and-year-string
+                    return new Date("1 " + a[0]) - new Date("1 " + b[0]);
                 })
             );
             
