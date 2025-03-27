@@ -126,12 +126,10 @@
             <h2>PAC Member of the Month</h2>
             <div class="stat-value" id="pacMemberText">Loading...</div>
         </div>
-        <!--
         <div class="stat-card" id="mostActiveDev">
-            <h2>Most Active Developer</h2>
+            <h2>Most Notorious Developer</h2>
             <div class="stat-value" id="mostActiveDevText">Loading...</div>
         </div>
-        -->
     </div>
 
     <script>
@@ -293,10 +291,13 @@
             Object.values(data.Channels).forEach(channel => {
                 Object.values(channel.Plugins).forEach(plugin => {
                     Object.values(plugin.Changelogs).forEach(changelog => {
-                        devActivity[changelog.Reviewer] = devActivity[changelog.Reviewer] || { updates: 0, plugins: new Set() };
-                        devActivity[changelog.Reviewer].updates++;
+                        if (changelog.Submitter === null)
+                            return;
+
+                        devActivity[changelog.Submitter] = devActivity[changelog.Reviewer] || { updates: 0, plugins: new Set() };
+                        devActivity[changelog.Submitter].updates++;
                         // Using plugin.EffectiveVersion as a proxy for plugin name since we don't have direct access
-                        devActivity[changelog.Reviewer].plugins.add(plugin.EffectiveVersion);
+                        devActivity[changelog.Submitter].plugins.add(plugin.EffectiveVersion);
                     });
                 });
             });
@@ -450,11 +451,9 @@
             pacMemberText.textContent = `${topReviewer} (${reviewCount} updates)`;
             
             // Update Most Active Developer
-            /*
             const mostActiveDevText = document.getElementById('mostActiveDevText');
             mostActiveDevText.textContent = 
                 `${mostActive.developer} (${mostActive.updates} updates, ${mostActive.uniquePlugins} plugins)`;
-            */
 
             // Fetch and set avatar backgrounds
             fetchGithubAvatar(topReviewer).then(avatarUrl => {
@@ -466,7 +465,6 @@
                 }
             });
 
-            /*
             fetchGithubAvatar(mostActive.developer).then(avatarUrl => {
                 if (avatarUrl) {
                     const img = document.createElement('img');
@@ -475,7 +473,6 @@
                     document.getElementById('mostActiveDev').appendChild(img);
                 }
             });
-            */
         }
 
         // Initialize the dashboard
